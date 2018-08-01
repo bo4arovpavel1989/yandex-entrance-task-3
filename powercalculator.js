@@ -164,8 +164,8 @@ class PowerCalculator {
 					if (maxPower < 0)
 						throw new Error('Too many devices! Not enough power!');
 					
-					let price = (d.power * currentRate.value) / 1000; //делим на 1000 чтобы перевести в КВатт;
-					
+					let price = d.power * currentRate.value;
+										
 					output.consumedEnergy.value += price;
 						
 					if(!output.consumedEnergy.devices[d.id])
@@ -194,8 +194,8 @@ class PowerCalculator {
 						
 						output.schedule[h.toString()].push(maxPowerDeviceId);
 						
-						let price = (maxPowerDevice.power * currentRate.value) / 1000;
-						
+						let price = (maxPowerDevice.power * currentRate.value)
+												
 						output.consumedEnergy.value += price;
 						
 						if(!output.consumedEnergy.devices[maxPowerDeviceId])
@@ -223,6 +223,13 @@ class PowerCalculator {
 				if(++h === 24)
 					h = 0;
 			}		
+		}
+		
+		//делим все значения на 1000, чтобы получить значения для КВатт
+		output.consumedEnergy.value /= 1000;
+		
+		for (let id in output.consumedEnergy.devices ) {
+			output.consumedEnergy.devices[id] /= 1000;	
 		}
 		
 		return output;
