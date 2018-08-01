@@ -16,9 +16,120 @@ class PowerCalculator {
 	
 	checkData(){
 		if(typeof(this.data) !== 'object')
-			throw new Error('Input data must be an object!')
+			throw new Error('Input data must be an object!');
+		
 		if(!this.data.devices || !this.data.rates || !this.data.maxPower)
-			throw new Error('Input data must contain devices, rates and maxPower fields!')		
+			throw new Error('Input data must contain devices, rates and maxPower fields!');
+		
+		if(typeof(this.data.devices) === 'object' && !isNaN(this.data.devices.length)) {
+			if (this.data.devices.length === 0)
+				throw new Error('Device key in input data object must be non empty array!');
+		} else {
+			throw new Error('Devices key in input data object must be an array!');
+		}
+		
+		if(typeof(this.data.rates) === 'object' && !isNaN(this.data.rates.length)) {
+			if (this.data.rates.length === 0)
+				throw new Error('Rates key in input data object must be non empty array!');
+		} else {
+			throw new Error('Rates key in input data object must be an array!');
+		}
+		
+		if(typeof(this.data.maxPower) !== 'number' || isNaN(this.data.maxPower))
+			throw new Error('MaxPower data must be a number!');
+		
+		this.data.devices.map((d, i) => {			
+			if(typeof(d) !== 'object')
+				throw new Error('Devices array must contain object members!');
+			
+			if (typeof(d.id) !== 'string')
+				throw new Error(`Device id must be a string. Check device #${i+1}!`);
+			
+			if(typeof(d.name) !== 'string')
+				throw new Error(`Device name must be a string. Check device #${i+1}!`);
+			
+			if(typeof(d.power) !== 'number' || isNaN(d.power))
+				throw new Error(`Device power must be a number. Check device #${i+1}`);
+			
+			if(typeof(d.duration) !== 'number' || isNaN(d.power))
+				throw new Error(`Device duration must be a number. Check device #${i+1}`);
+			
+			if(!(d.mode == 'day' || d.mode == 'night' || !d.mode))
+				throw new Error(`Device mode must be a string values day, night or undefined. Check device #${i+1}`);
+			
+			if(d.duration > 24)
+				throw new Error(`Device duration cannot be more than 24h. Check device #${i+1}`);
+			
+			if(d.power > this.data.maxPower)
+				throw new Error(`Device #${i+1} overrides available power rate!`);
+			
+			if(d.mode === 'day') {
+				if(d.duration > this.dayTimeLeft)
+					throw new Error(`Device duration cannot be more than available day duration. Check device #${i+1}`);
+			} else if (d.mode === 'night') {
+				if(d.duration > this.nightTimeLeft)
+					throw new Error(`Device duration cannot be more than available night duration. Check device #${i+1}`);	
+			}
+		});
+		
+		this.data.rates.map((r, i) => {
+			if(typeof(r) !== 'object')
+				throw new Error('Rates array must contain object members!')
+			
+			if(typeof(r.from) !== 'number' && isNaN(r.from))
+				throw new Error(`Rates from param must be a number. Check rate #${i+1}!`);
+			
+			if(typeof(r.to) !== 'number' && isNaN(r.to))
+				throw new Error(`Rates to param must be a number. Check rate #${i+1}!`);
+			
+			if(typeof(r.value) !== 'number' && isNaN(r.value))
+				throw new Error(`Rates value param must be a number. Check rate #${i+1}!`);
+			
+			if(r.from > 23)
+				throw new Error(`Rates value from cannot be more than 23. Check rate #${i+1}.`);
+			
+			if(r.to > 23)
+				throw new Error(`Rates value to cannot be more than 23. Check rate #${i+1}.`);
+			
+			if(r.from < 0)
+				throw new Error(`Rates value from must be positive. Check rate #${i+1}.`);
+			
+			if(r.to < 0)
+				throw new Error(`Rates value to must be positive. Check rate #${i+1}.`);
+		});
+		
+		this.checkRatesSchedule(this.data.rates);
+	}
+	
+	checkRatesSchedule(rates){
+		let rateSchedule = new Array(24);
+		rateSchedule.fill(0);
+		
+		rates.map((r, i) => {
+			let start = r.from;
+			
+			while (start !== r.to) {
+				if(rateSchedule[start] === 1)
+					throw new Error(`There are more than 1 rate for ${start} hour! Check rate #${i}.`);
+				else
+					rateSchedule[start] = 1;
+				
+				if(++start === 24)
+					start = 0;
+			}
+		});
+		
+		if(rateSchedule.includes(0)) {
+			let emptyHours = [];
+			
+			rateSchedule.map((k,i) => {
+				if(k === 0)
+					emptyHours.push(i);
+			})
+			
+			throw new Error(`There are not defined value rates for hours: ${emptyHours}`);
+		}
+			
 	}
 	
 	markCheapestTime(val){ //помечаем временной период как используемый и возвращаем его
