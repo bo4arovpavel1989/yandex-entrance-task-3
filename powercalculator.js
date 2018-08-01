@@ -1,5 +1,3 @@
-const fs = require('fs');
-
 class PowerCalculator {
 	constructor(){
 		this.data = [];
