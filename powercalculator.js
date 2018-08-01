@@ -1,10 +1,9 @@
 class PowerCalculator {
 	constructor(){
 		this.data = [];
-		this.output = [];
 		this.timeLeft = 24;
-		this.dayTimeLeft = 14;
-		this.nightTimeLeft = 10;
+		this.dayTimeLeft = 14; //с 7 до 21 не включительно
+		this.nightTimeLeft = 10; //с 21 до 7 не включительно
 		this.maxPower;
 	}
 	
