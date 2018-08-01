@@ -256,16 +256,14 @@ class PowerCalculator {
 		while (this.timeLeft > 0) {
 			let currentRate = this.getCheapestTime();
 			let h = currentRate.from;
-						
+									
 			while ( h !== currentRate.to) {
 				let maxPower = this.maxPower;
 				let timeOfDay = (h >= 7 && h < 21) ? 'day' : 'night';		
 				let emergDevices = this.getEmergencyNeededDevice(timeOfDay);
+				output.schedule[h.toString()] = []; //заводим пустой массив в расписание текущего часа
 				
 				emergDevices.map(d => { //включаем в расписание устройства, которым в первую очередь необходимо работать
-					
-					if(!output.schedule[h.toString()])
-						output.schedule[h.toString()] = [];
 					
 					output.schedule[h.toString()].push(d.id);
 					
@@ -298,10 +296,7 @@ class PowerCalculator {
 						maxPower -= maxPowerDevice.power;
 						
 						maxPowerDevice.duration--;
-						
-						if(!output.schedule[h.toString()])
-							output.schedule[h.toString()] = [];
-						
+												
 						output.schedule[h.toString()].push(maxPowerDeviceId);
 						
 						let price = (maxPowerDevice.power * currentRate.value)
