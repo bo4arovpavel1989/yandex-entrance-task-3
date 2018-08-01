@@ -164,12 +164,14 @@ class PowerCalculator {
 					if (maxPower < 0)
 						throw new Error('Too many devices! Not enough power!');
 					
-					output.consumedEnergy.value += d.power * currentRate.value;
+					let price = (d.power * currentRate.value) / 1000; //делим на 1000 чтобы перевести в КВатт;
+					
+					output.consumedEnergy.value += price;
 						
 					if(!output.consumedEnergy.devices[d.id])
-						output.consumedEnergy.devices[d.id] = d.power * currentRate.value;
+						output.consumedEnergy.devices[d.id] = price;
 					else 
-						output.consumedEnergy.devices[d.id] += d.power * currentRate.value;
+						output.consumedEnergy.devices[d.id] += price;
 				});
 				
 				/*
@@ -192,12 +194,14 @@ class PowerCalculator {
 						
 						output.schedule[h.toString()].push(maxPowerDeviceId);
 						
-						output.consumedEnergy.value += maxPowerDevice.power * currentRate.value;
+						let price = (maxPowerDevice.power * currentRate.value) / 1000;
+						
+						output.consumedEnergy.value += price;
 						
 						if(!output.consumedEnergy.devices[maxPowerDeviceId])
-							output.consumedEnergy.devices[maxPowerDeviceId] = maxPowerDevice.power * currentRate.value;
+							output.consumedEnergy.devices[maxPowerDeviceId] = price;
 						else 
-							output.consumedEnergy.devices[maxPowerDeviceId] += maxPowerDevice.power * currentRate.value;
+							output.consumedEnergy.devices[maxPowerDeviceId] += price;
 					} else {
 						maxPower = 0; //больше устройств не влезет в этот час, обнуляем переменную чтобы закончить цикл
 					}
