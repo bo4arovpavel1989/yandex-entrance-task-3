@@ -1,0 +1,22 @@
+{
+  "name": "yandex-entrance-task-3",
+  "version": "1.0.0",
+  "description": "В этом репозитории находятся материалы тестового задания по JavaScript для [14-й Школы разработки интерфейсов](https://academy.yandex.ru/events/frontend/shri_msk-2018-2) (осень 2018, Москва, Санкт-Петербург, Симферополь).",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/bo4arovpavel1989/yandex-entrance-task-3.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/bo4arovpavel1989/yandex-entrance-task-3/issues"
+  },
+  "homepage": "https://github.com/bo4arovpavel1989/yandex-entrance-task-3#readme",
+  "dependencies": {
+    "fs": "0.0.1-security"
+  }
+}
