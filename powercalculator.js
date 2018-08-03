@@ -1,17 +1,10 @@
 class PowerCalculator {
-	constructor(){
-		this.data = [];
+	constructor(data){
+		this.data = data;
+		this.maxPower = data.maxPower;
 		this.timeLeft = 24;
 		this.dayTimeLeft = 14; //с 7 до 21 не включительно
 		this.nightTimeLeft = 10; //с 21 до 7 не включительно
-		this.maxPower;
-	}
-	
-	setData(data){
-		this.data = data;
-		this.maxPower = data.maxPower;
-		
-		return this;
 	}
 	
 	checkData(){
@@ -46,29 +39,29 @@ class PowerCalculator {
 				throw new Error(`Device id must be a string. Check device #${i+1}!`);
 			
 			if(typeof(d.name) !== 'string')
-				throw new Error(`Device name must be a string. Check device #${i+1}!`);
+				throw new Error(`Device name must be a string. Check device #${i+1} (${d.id})!`);
 			
 			if(typeof(d.power) !== 'number' || isNaN(d.power))
-				throw new Error(`Device power must be a number. Check device #${i+1}`);
+				throw new Error(`Device power must be a number. Check device #${i+1} (${d.id})`);
 			
 			if(typeof(d.duration) !== 'number' || isNaN(d.power))
-				throw new Error(`Device duration must be a number. Check device #${i+1}`);
+				throw new Error(`Device duration must be a number. Check device #${i+1} (${d.id})`);
 			
 			if(!(d.mode == 'day' || d.mode == 'night' || !d.mode))
-				throw new Error(`Device mode must be a string values day, night or undefined. Check device #${i+1}`);
+				throw new Error(`Device mode must be a string values day, night or undefined. Check device #${i+1} (${d.id})`);
 			
 			if(d.duration > 24)
-				throw new Error(`Device duration cannot be more than 24h. Check device #${i+1}`);
+				throw new Error(`Device duration cannot be more than 24h. Check device #${i+1} (${d.id})`);
 			
 			if(d.power > this.data.maxPower)
-				throw new Error(`Device #${i+1} overrides available power rate!`);
+				throw new Error(`Device #${i+1} (${d.id}) overrides available power rate!`);
 			
 			if(d.mode === 'day') {
 				if(d.duration > this.dayTimeLeft)
-					throw new Error(`Device duration cannot be more than available day duration. Check device #${i+1}`);
+					throw new Error(`Device duration cannot be more than available day duration. Check device #${i+1} (${d.id})`);
 			} else if (d.mode === 'night') {
 				if(d.duration > this.nightTimeLeft)
-					throw new Error(`Device duration cannot be more than available night duration. Check device #${i+1}`);	
+					throw new Error(`Device duration cannot be more than available night duration. Check device #${i+1} (${d.id})`);	
 			}
 		});
 		
@@ -83,19 +76,19 @@ class PowerCalculator {
 				throw new Error(`Rates to param must be a number. Check rate #${i+1}!`);
 			
 			if(typeof(r.value) !== 'number' && isNaN(r.value))
-				throw new Error(`Rates value param must be a number. Check rate #${i+1}!`);
+				throw new Error(`Rates value param must be a number. Check rate #${i+1} (${r.from} - ${r.to})!`);
 			
 			if(r.from > 23)
-				throw new Error(`Rates value from cannot be more than 23. Check rate #${i+1}.`);
+				throw new Error(`Rates value from cannot be more than 23. Check rate #${i+1} (${r.from} - ${r.to}).`);
 			
 			if(r.to > 23)
-				throw new Error(`Rates value to cannot be more than 23. Check rate #${i+1}.`);
+				throw new Error(`Rates value to cannot be more than 23. Check rate #${i+1} (${r.from} - ${r.to}).`);
 			
 			if(r.from < 0)
-				throw new Error(`Rates value from must be positive. Check rate #${i+1}.`);
+				throw new Error(`Rates value from must be positive. Check rate #${i+1} (${r.from} - ${r.to}).`);
 			
 			if(r.to < 0)
-				throw new Error(`Rates value to must be positive. Check rate #${i+1}.`);
+				throw new Error(`Rates value to must be positive. Check rate #${i+1} (${r.from} - ${r.to}).`);
 		});
 		
 		this.checkRatesSchedule(this.data.rates);
@@ -161,7 +154,7 @@ class PowerCalculator {
 		let val = rates[0].value;
 		
 		rates.map(r => {
-			val = (r.value <= val) ? r.value : val;	
+			val = (r.value < val) ? r.value : val;	
 		});
 			
 		return this.markCheapestTime(val);

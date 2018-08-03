@@ -1,13 +1,13 @@
 const fs = require('fs');
 const PowerCalculator = require('./powercalculator');
 
-let powerCalculator = new PowerCalculator();
 
 fs.readFile('data/input.json', (err, data)=>{
 	
 	if(!err){
 		data = JSON.parse(data);
-		let output = powerCalculator.setData(data).start();	
+		let powerCalculator = new PowerCalculator(data);
+		let output = powerCalculator.start();	
 						
 		console.log(output);				
 	} else {
