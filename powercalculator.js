@@ -95,8 +95,7 @@ class PowerCalculator {
 	}
 	
 	checkRatesSchedule(rates){
-		let rateSchedule = new Array(24);
-		rateSchedule.fill(0);
+		let rateSchedule = new Array(24).fill(0);
 		
 		rates.map((r, i) => {
 			let start = r.from;
